@@ -3,7 +3,7 @@ from django.db.models import Sum, Count, Avg, Q, Max
 from itertools import chain
 from operator import attrgetter
 from copy import deepcopy
-
+# stackoverflow: copy() will not work in the last case, you need deepcopy() whenever you have a reference inside the object
 
 def merge_list_of_dictionaries_by_var(merge_var):
   def merge_lists(l1, l2):
@@ -17,14 +17,15 @@ def merge_list_of_dictionaries_by_var(merge_var):
     return list(x.values())
   return merge_lists
 
-a = Patient.objects.values('patient_name')\
-    .annotate(p2 = Sum('treatment__price'), p3 = Count('treatment__price'), max_d = Max('treatment__treatment_date'))
-b = Patient.objects.values('patient_name')\
-    .annotate(p = Sum('group__price'))
-c = Patient.objects.values('patient_name')\
-    .annotate(payment = Sum('payment__amount'), payment_cnt = Count('payment__amount'))
-
-L = [a,b,c]
-reduce(merge_list_of_dictionaries_by_var('patient_name'), L)
-
-
+# merge_var = 'id'
+l1 = [{'id':'1','name':'liad'}, {'id':'2','name':'lee'}]
+l2 = [{'id':'1','age':'32'}, {'id':'2','age':'30'}]
+l3 = [{'id':'1','age1':'321'}, {'id':'2','age1':'301'}]
+l4 = [{'id':'1','age2':'322'}, {'id':'2','age2':'302'}]
+L = [l1,l2,l3,l4]
+merge_by_id = merger_by('id')
+# merge_dicts_in_list(l1, l2, merge_var)
+print "\n"
+merge(l1,l2)
+reduce(merge_by_id, L)
+reduce(merger_by('id'), L)
